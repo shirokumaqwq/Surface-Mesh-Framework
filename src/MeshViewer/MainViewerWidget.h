@@ -55,8 +55,8 @@ public slots:
 		QString fileName = QFileDialog::getOpenFileName(this,
 			tr("Open mesh file"),
 			tr("../models/"),
-			tr("OFF Files (*.off);;"
-			"OBJ Files (*.obj);;"
+			tr("OBJ Files (*.obj);;"
+			"OFF Files (*.off);;"
 			"PLY Files (*.ply);;"
 			"STL Files (*.stl);;"
 			"All Files (*)"));
