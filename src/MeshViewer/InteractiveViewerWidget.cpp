@@ -5,6 +5,8 @@
 #include <QtCore>
 #include <QUrl>
 
+#include <time.h>
+#include <iostream>
 #include "InteractiveViewerWidget.h"
 
 InteractiveViewerWidget::InteractiveViewerWidget(QWidget* parent /* = 0 */)
@@ -69,11 +71,7 @@ void InteractiveViewerWidget::mousePressEvent(QMouseEvent *_event)
 			{
 				pick_vertex( _event->x(), _event->y() );//set the selected handle
 				deformer = new ARAPSurfaceModeling(&mesh);
-				deformer->SetFixedVertex(selectedVertex);
-				deformer->InitDeltah();
-				//deformer->InitCotWeight();
-				deformer->InitUniformWeight();
-				deformer->PreComputeMatrix();
+				deformer->Init(selectedVertex);
 			}
 			else if(mouse_mode_ == EDGECOLLAPSE)
 			{
@@ -226,7 +224,11 @@ void InteractiveViewerWidget::mouseMoveEvent(QMouseEvent *_event)
 
 				deformer->SetMovingVertex(lastestVertex, P);
 				//mesh.set_point( mesh.vertex_handle(lastestVertex), P );
-				deformer->DoARAP(1);
+				clock_t start, end;
+				start = clock();
+				deformer->DoARAP(5);
+				end = clock();
+				std::cout << "time:" << end - start << "ms." << std::endl;
 				updateGL();
 			}
 		}
@@ -254,6 +256,7 @@ void InteractiveViewerWidget::mouseReleaseEvent(QMouseEvent *_event)
 				Mesh::Point P(selectedPoint[0], selectedPoint[1], selectedPoint[2]);
 				deformer->SetMovingVertex(lastestVertex, P);
 				//mesh.set_point( mesh.vertex_handle(lastestVertex), P );
+				deformer->DoARAP(5);
 				updateGL();
 			}
 		}

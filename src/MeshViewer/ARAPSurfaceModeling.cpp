@@ -75,11 +75,55 @@ void ARAPSurfaceModeling::InitCotWeight()
 	weight.reserve(mesh->n_halfedges());;
 	for (auto& heh : mesh->halfedges())
 	{
+		if (heh.is_boundary())
+		{
+			weight.push_back(0);
+			continue;
+		}
 		auto he1 = mesh->calc_edge_vector(heh.prev());
 		auto he2 = mesh->calc_edge_vector(heh.next().opp());
 		weight.push_back(he1.dot(he2) / he1.cross(he2).norm());
 	}
 }
+
+void ARAPSurfaceModeling::PreComputeMatrix()
+{
+	std::vector<T> triplist;
+	triplist.reserve(mesh->n_halfedges());
+
+	for (auto& vh : mesh->vertices())
+	{
+		if (fixed_vertex.count(vh.idx()) > 0)
+		{
+			triplist.push_back(T(vh.idx(), vh.idx(), 1));
+			continue;
+		}
+		double qwq_weight = 0;
+		for (auto& hvh : vh.outgoing_halfedges())
+		{
+			double temp_weight = weight[hvh.idx()] + weight[hvh.opp().idx()];
+			qwq_weight += temp_weight;
+			triplist.push_back(T(vh.idx(), hvh.to().idx(), -temp_weight));
+		}
+		//cout << vh.idx() << ":" << qwq_weight << endl;
+		triplist.push_back(T(vh.idx(), vh.idx(), qwq_weight));
+	}
+	Eigen::SparseMatrix<double> S;
+	S.resize(mesh->n_vertices(), mesh->n_vertices());
+	S.setFromTriplets(triplist.begin(),triplist.end());
+
+	solver.compute(S);
+}
+
+void ARAPSurfaceModeling::Init(std::vector<int> selectedVertex)
+{
+	SetFixedVertex(selectedVertex);
+	InitDeltah();
+	//InitCotWeight();
+	InitUniformWeight();
+	PreComputeMatrix();
+}
+
 
 std::vector<Eigen::Matrix3d>  ARAPSurfaceModeling::Local()
 {
@@ -114,34 +158,6 @@ std::vector<Eigen::Matrix3d>  ARAPSurfaceModeling::Local()
 	}
 
 	return rotation_m;
-}
-
-void ARAPSurfaceModeling::PreComputeMatrix()
-{
-	std::vector<T> triplist;
-	triplist.reserve(mesh->n_halfedges());
-
-	for (auto& vh : mesh->vertices())
-	{
-		if (fixed_vertex.count(vh.idx()) > 0)
-		{
-			triplist.push_back(T(vh.idx(), vh.idx(), 1));
-			continue;
-		}
-		double qwq_weight = 0;
-		for (auto& hvh : vh.outgoing_halfedges())
-		{
-			double temp_weight = weight[hvh.idx()] + weight[hvh.opp().idx()];
-			qwq_weight += temp_weight;
-			triplist.push_back(T(vh.idx(), hvh.to().idx(), -temp_weight));
-		}
-		triplist.push_back(T(vh.idx(), vh.idx(), qwq_weight));
-	}
-	Eigen::SparseMatrix<double> S;
-	S.resize(mesh->n_vertices(), mesh->n_vertices());
-	S.setFromTriplets(triplist.begin(),triplist.end());
-
-	solver.compute(S);
 }
 
 Eigen::MatrixX3d ARAPSurfaceModeling::Global(std::vector<Eigen::Matrix3d> rotation)
