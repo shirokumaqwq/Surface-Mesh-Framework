@@ -3,6 +3,7 @@
 
 #include "MeshViewerWidget.h"
 #include "../ANN/ANN.h"
+#include "ARAPSurfaceModeling.h"
 
 class InteractiveViewerWidget : public MeshViewerWidget
 {
@@ -126,6 +127,7 @@ protected:
 	int lastestFace;
 	std::vector<int> selectedEdge;
 	int lastestEdge;
+	ARAPSurfaceModeling* deformer;
 
 protected:
 	void dragEnterEvent(QDragEnterEvent *event);
