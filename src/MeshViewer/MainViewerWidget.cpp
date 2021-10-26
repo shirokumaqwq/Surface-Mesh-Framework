@@ -37,6 +37,7 @@ void MainViewerWidget::initViewerWindow()
 	connect(MeshViewer,SIGNAL(set_edit_redo_enable_viewer_signal(bool)),SIGNAL(set_edit_redo_enable_signal(bool)));
 
 	connect(MeshParam, SIGNAL(print_info_signal()), SLOT(print_info()));
+	connect(MeshParam, SIGNAL(do_mvc_parameterization()), SLOT(mvc_parameterization()));
 }
 
 void MainViewerWidget::createParamIDialog()
@@ -102,4 +103,9 @@ void MainViewerWidget::save_screen_gui(QString fname)
 void MainViewerWidget::print_info()
 {
 	MeshViewer->printBasicMeshInfo();
+}
+
+void MainViewerWidget::mvc_parameterization()
+{
+	MeshViewer->domvcparameterization();
 }

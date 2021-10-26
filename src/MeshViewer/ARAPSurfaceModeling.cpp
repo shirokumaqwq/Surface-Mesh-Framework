@@ -108,8 +108,7 @@ void ARAPSurfaceModeling::PreComputeMatrix()
 		//cout << vh.idx() << ":" << qwq_weight << endl;
 		triplist.push_back(T(vh.idx(), vh.idx(), qwq_weight));
 	}
-	Eigen::SparseMatrix<double> S;
-	S.resize(mesh->n_vertices(), mesh->n_vertices());
+	Eigen::SparseMatrix<double> S(mesh->n_vertices(), mesh->n_vertices());
 	S.setFromTriplets(triplist.begin(),triplist.end());
 
 	solver.compute(S);

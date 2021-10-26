@@ -10,6 +10,8 @@
 #include "MeshViewerWidget.h"
 #include "../Common/CommonDefinitions.h"
 
+#include "MVCParameterization.h"
+
 using namespace Qt;
 
 MeshViewerWidget::MeshViewerWidget(QWidget* parent)
@@ -264,6 +266,14 @@ void MeshViewerWidget::printBasicMeshInfo()
 	fclose(f_tet);*/
 }
 
+void MeshViewerWidget::domvcparameterization()
+{
+	std::cout << "MVC Parameterization" << std::endl;
+	MVCParameterization para(&mesh);
+	para.Parameterize();
+	updateMesh();
+	update();
+}
 
 bool MeshViewerWidget::saveMesh(const char* filename)
 {

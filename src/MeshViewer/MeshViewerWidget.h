@@ -51,6 +51,7 @@ public:
 		updateGL();
 	}
 	void printBasicMeshInfo();
+	void domvcparameterization();
 signals:
 	void loadMeshOK(bool,QString);
 

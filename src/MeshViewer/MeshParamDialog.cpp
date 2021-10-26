@@ -38,10 +38,13 @@ void MeshParamDialog::createLayout()
 void MeshParamDialog::create_Basic_Operation_Information_Widget()
 {
 	print_info = new QPushButton("Print Mesh Information");
+	MVC_parameterization = new QPushButton("MVC Parameterization");
 	leftLabel_BOI = new QLabel("");
 
 	QGridLayout* mainLayout = new QGridLayout(); int main_index = 0;
 	mainLayout->addWidget(print_info, main_index, 0, 1, 2); main_index += 1;
+	mainLayout->addWidget(MVC_parameterization, main_index, 0, 1, 2); main_index += 1;
+
 	mainLayout->addWidget(leftLabel_BOI, main_index, 0, 1, 40);
 
 	Basic_Operation_And_Information = new QWidget();
@@ -54,4 +57,7 @@ void MeshParamDialog::create_Basic_Operation_Information_Widget()
 	view_BOI->setWidgetResizable(true);
 
 	connect(print_info, SIGNAL(clicked()), SIGNAL(print_info_signal()));
+	connect(MVC_parameterization, SIGNAL(clicked()), SIGNAL(do_mvc_parameterization()));
+
+	
 }

@@ -134,6 +134,7 @@ public slots:
 
 	//
 	void print_info();
+	void mvc_parameterization();
 
 signals:
 	void haveLoadMesh(QString filePath);
