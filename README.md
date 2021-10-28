@@ -28,4 +28,5 @@ Open **SurfaceFramework.sln**, select **SrufaceFramework** as launch project, an
 
 .obj .off .ply .stl
 
-## 这个里写第六次之后的作业
+## 这个里写DGP第六次之后的作业
+https://www.bilibili.com/video/BV1B54y1B7Uc
