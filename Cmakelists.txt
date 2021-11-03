@@ -69,9 +69,15 @@ file (GLOB MeshViewer_FILE
     src/MeshViewer/MeshViewerWidget.*
     src/MeshViewer/OpenglHeaders.h
     src/MeshViewer/QGLViewerWidget.*
+<<<<<<< HEAD
     src/MeshViewer/ARAPSurfaceModeling.*
     src/MeshViewer/MVCParameterization.*
 
+=======
+    src/MeshViewer/Parameterization.*
+    src/MeshViewer/ARAPSurfaceModeling.*
+    src/MeshViewer/MVCParameterization.*
+>>>>>>> 5a20fe25f028bd34ede2e9a26de6f8bee971945c
 )
 
 add_executable(${PROJECT_NAME} ${SRCFILES} 

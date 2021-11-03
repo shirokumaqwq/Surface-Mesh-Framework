@@ -38,6 +38,10 @@ void MainViewerWidget::initViewerWindow()
 
 	connect(MeshParam, SIGNAL(print_info_signal()), SLOT(print_info()));
 	connect(MeshParam, SIGNAL(do_mvc_parameterization()), SLOT(mvc_parameterization()));
+	connect(MeshParam, SIGNAL(set_initial_mesh()), SLOT(initial_mesh()));
+	connect(MeshParam, SIGNAL(set_final_mesh()), SLOT(final_mesh()));
+	connect(MeshParam, SIGNAL(do_morphing2d()), SLOT(morphing_2d()));
+
 }
 
 void MainViewerWidget::createParamIDialog()
@@ -108,4 +112,19 @@ void MainViewerWidget::print_info()
 void MainViewerWidget::mvc_parameterization()
 {
 	MeshViewer->domvcparameterization();
+}
+
+void MainViewerWidget::initial_mesh()
+{
+	MeshViewer->setInitialMesh();
+}
+
+void MainViewerWidget::final_mesh()
+{
+	MeshViewer->setFinalMesh();
+}
+
+void MainViewerWidget::morphing_2d()
+{
+	MeshViewer->doMorphing2D();
 }

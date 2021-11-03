@@ -52,6 +52,9 @@ public:
 	}
 	void printBasicMeshInfo();
 	void domvcparameterization();
+	void setInitialMesh();
+	void setFinalMesh();
+	void doMorphing2D();
 signals:
 	void loadMeshOK(bool,QString);
 
@@ -75,9 +78,12 @@ protected:
 	OpenMesh::Vec3d bbMin;
 	OpenMesh::Vec3d bbMax;
 	Mesh mesh;
+	bool is_save_mesh = false;
 	bool draw_BBox_OK;
 	bool draw_mesh_boundary_ok;
 	std::vector<Mesh> mesh_vector;
+	Mesh mesh_init;
+	Mesh mesh_final;
 	int mesh_vector_index;
 
 private:
