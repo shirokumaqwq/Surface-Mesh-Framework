@@ -27,3 +27,6 @@ Open **SurfaceFramework.sln**, select **SrufaceFramework** as launch project, an
 ## Supported File Formats
 
 .obj .off .ply .stl
+
+## 这个里写DGP第六次之后的作业
+https://www.bilibili.com/video/BV1B54y1B7Uc
