@@ -70,8 +70,8 @@ public slots:
 		QString fileName = QFileDialog::getSaveFileName(this,
 			tr("Save mesh file"),
 			tr("../models/untitled.off"),
-			tr("OFF Files (*.off);;"
-			"OBJ Files (*.obj);;"
+			tr("OBJ Files (*.obj);;"
+			"OFF Files (*.off);;"
 			"PLY Files (*.ply);;"
 			"STL Files (*.stl);;"
 			"All Files (*)"));
@@ -135,6 +135,9 @@ public slots:
 	//
 	void print_info();
 	void mvc_parameterization();
+	void initial_mesh();
+	void final_mesh();
+	void morphing_2d();
 
 signals:
 	void haveLoadMesh(QString filePath);

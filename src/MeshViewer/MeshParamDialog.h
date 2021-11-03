@@ -24,6 +24,9 @@ private:
 signals:
 	void print_info_signal();
 	void do_mvc_parameterization();
+	void set_initial_mesh();
+	void set_final_mesh();
+	void do_morphing2d();
 
 private:
 	QWidget* Basic_Operation_And_Information;
@@ -32,6 +35,9 @@ private:
 	QLabel* leftLabel_BOI;
 	QPushButton* print_info;
 	QPushButton* MVC_parameterization;
+	QPushButton* initial_mesh;
+	QPushButton* final_mesh;
+	QPushButton* morphing2d;
 
 private:
 	void create_Basic_Operation_Information_Widget();

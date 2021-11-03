@@ -11,6 +11,7 @@
 #include "../Common/CommonDefinitions.h"
 
 #include "MVCParameterization.h"
+#include "Morphing2D.h"
 
 using namespace Qt;
 
@@ -119,6 +120,8 @@ void MeshViewerWidget::updateMeshNormals()
 bool MeshViewerWidget::openMesh(const char* filename)
 {
 	clearAllMesh();
+	
+
 	bool read_OK = OpenMesh::IO::read_mesh( mesh, filename );
 
 	printf("%s\n", filename);
@@ -140,7 +143,7 @@ bool MeshViewerWidget::openMesh(const char* filename)
 		}
 		fclose(f_de);*/
 		// loading done
-		mesh_vector.push_back(mesh); mesh_vector_index = 0;
+		mesh_vector.push_back(mesh); mesh_vector_index++;
 		return true;
 	}
 	return false;
@@ -272,6 +275,34 @@ void MeshViewerWidget::domvcparameterization()
 	MVCParameterization para(&mesh);
 	para.Parameterize();
 	updateMesh();
+	update();
+}
+
+void MeshViewerWidget::setInitialMesh()
+{
+	mesh_init.clear();
+	mesh_init.assign(mesh);
+	std::cout <<"n:"<< mesh_init.n_vertices() << std::endl;
+	std::cout << "Set initial mesh successfully" << std::endl;
+}
+
+void MeshViewerWidget::setFinalMesh()
+{
+	mesh_final.clear();
+	mesh_final.assign(mesh);
+
+	std::cout << "Set final mesh successfully" << std::endl;
+}
+
+void MeshViewerWidget::doMorphing2D()
+{
+	std::cout << "Morphing" << std::endl;
+
+	mesh.clear();
+	mesh = mesh_init;
+	initMesh();
+	Morphing2D morphing(mesh, mesh_final);
+	morphing.Local();
 	update();
 }
 
