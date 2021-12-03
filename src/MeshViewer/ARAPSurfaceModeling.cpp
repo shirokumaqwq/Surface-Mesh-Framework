@@ -4,6 +4,7 @@
 #include <Eigen/dense>
 
 #include <omp.h>
+#include <time.h>
 #include <iostream>
 using namespace std;
 
@@ -43,21 +44,8 @@ void ARAPSurfaceModeling::InitDeltah()
 	delta_h.reserve(mesh->n_halfedges());
 	for (auto& heh : mesh->halfedges())
 	{
-		/*if (heh.to().idx() == moving_point)
-		{
-			auto p = mesh->point(heh.from());
-			delta_h.push_back({ target_pos[0] - p[0],target_pos[1] - p[1],target_pos[2] - p[2] });
-		}
-		else if(heh.from().idx() == moving_point)
-		{
-			auto p = mesh->point(heh.from());
-			delta_h.push_back({ -target_pos[0] + p[0],-target_pos[1] + p[1],-target_pos[2] + p[2] });
-		}
-		else
-		{*/
-			auto v = mesh->calc_edge_vector(heh);
-			delta_h.push_back({ v[0],v[1],v[2] });
-		//}
+		auto v = mesh->calc_edge_vector(heh);
+		delta_h.push_back({ v[0],v[1],v[2] });
 	}
 }
 
@@ -71,18 +59,18 @@ void ARAPSurfaceModeling::InitUniformWeight()
 
 void ARAPSurfaceModeling::InitCotWeight()
 {
-	weight.clear();
-	weight.reserve(mesh->n_halfedges());;
+	cot_weight.clear();
+	cot_weight.reserve(mesh->n_halfedges());;
 	for (auto& heh : mesh->halfedges())
 	{
 		if (heh.is_boundary())
 		{
-			weight.push_back(0);
+			cot_weight.push_back(0);
 			continue;
 		}
 		auto he1 = mesh->calc_edge_vector(heh.prev());
 		auto he2 = mesh->calc_edge_vector(heh.next().opp());
-		weight.push_back(he1.dot(he2) / he1.cross(he2).norm());
+		cot_weight.push_back(he1.dot(he2) / he1.cross(he2).norm());
 	}
 }
 
@@ -112,13 +100,14 @@ void ARAPSurfaceModeling::PreComputeMatrix()
 	S.setFromTriplets(triplist.begin(),triplist.end());
 
 	solver.compute(S);
+	//solver2.compute(S);
 }
 
 void ARAPSurfaceModeling::Init(std::vector<int> selectedVertex)
 {
 	SetFixedVertex(selectedVertex);
 	InitDeltah();
-	//InitCotWeight();
+	InitCotWeight();
 	InitUniformWeight();
 	PreComputeMatrix();
 }
@@ -126,7 +115,8 @@ void ARAPSurfaceModeling::Init(std::vector<int> selectedVertex)
 
 std::vector<Eigen::Matrix3d>  ARAPSurfaceModeling::Local()
 {
-
+	clock_t t1, t2;
+	t1 = clock();
 	std::vector<Eigen::Matrix3d> rotation_m;
 	rotation_m.resize(mesh->n_vertices());
 
@@ -155,12 +145,16 @@ std::vector<Eigen::Matrix3d>  ARAPSurfaceModeling::Local()
 		//std::cout << S << std::endl;
 		rotation_m[n] = S;
 	}
+	t2 = clock();
+	std::cout << "local:" << t2 - t1 << "ms" << std::endl;
 
 	return rotation_m;
 }
 
-Eigen::MatrixX3d ARAPSurfaceModeling::Global(std::vector<Eigen::Matrix3d> rotation)
+Eigen::MatrixX3d ARAPSurfaceModeling::Global(const std::vector<Eigen::Matrix3d> &rotation)
 {
+	clock_t t1, t2;
+	t1 = clock();
 	//Eigen::VectorXd X = Eigen::VectorXd::Zero(mesh->n_vertices());
 	int vnum = mesh->n_vertices();
 	Eigen::MatrixX3d RH = Eigen::MatrixX3d::Zero(vnum, 3);
@@ -188,13 +182,17 @@ Eigen::MatrixX3d ARAPSurfaceModeling::Global(std::vector<Eigen::Matrix3d> rotati
 		for (int i = 0; i < 3; i++)
 			RH(iter, i) = pv[i];
 	}
+	t2 = clock();
+	std::cout << "global:" << t2 - t1 << "ms" << std::endl;
 
 	for (int i = 0; i < 3; i++)
 		RH(moving_point, i) = target_pos[i];
-
+	clock_t t3, t4;
+	t3 = clock();
 	for (int i = 0; i < 3; i++)
 		sol.col(i) = solver.solve(RH.col(i));
-
+	t4 = clock();
+	std::cout << "求解方程：" << t4 - t3 << std::endl;
 #pragma omp parallel for
 	for (int n = 0; n < mesh->n_halfedges(); n++)
 	{
@@ -203,6 +201,8 @@ Eigen::MatrixX3d ARAPSurfaceModeling::Global(std::vector<Eigen::Matrix3d> rotati
 		int v2 = mesh->to_vertex_handle(hh).idx();
 		delta_h[n] = (sol.row(v2) - sol.row(v1));
 	}
+
+
 	return sol;
 }
 
@@ -214,7 +214,11 @@ void ARAPSurfaceModeling::DoARAP(int n)
 			Global(Local());
 	}
 	sol = Global(Local());
+	clock_t t1, t2;
+	t1 = clock();
 #pragma omp parallel for
 	for (int n = 0; n < mesh->n_vertices(); n++)
 		mesh->set_point(mesh->vertex_handle(n), MeshTraits::Point(sol(n, 0), sol(n, 1), sol(n, 2)));
+	t2 = clock();
+	std::cout << "set mesh:" << t2 - t1 << "ms" << std::endl;
 }

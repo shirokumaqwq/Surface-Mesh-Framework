@@ -6,12 +6,15 @@
 
 #include <OpenMesh/Core/Utils/vector_cast.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
+#include <Eigen/Core>
 
 #include "MeshViewerWidget.h"
 #include "../Common/CommonDefinitions.h"
 
 #include "MVCParameterization.h"
 #include "Morphing2D.h"
+#include "FEM2D.h"
+#include "LoopSubdivision.h"
 
 using namespace Qt;
 
@@ -269,6 +272,20 @@ void MeshViewerWidget::printBasicMeshInfo()
 	fclose(f_tet);*/
 }
 
+
+void MeshViewerWidget::solveLaplaceEquation()
+{
+	//创建FEM求解器
+	FEM2D femtool(mesh);
+	Eigen::VectorXd u = femtool.Solve(femtool.ConstructMatrix());
+
+	for (auto& vh : mesh.vertices())
+		mesh.set_point(vh, OpenMesh::Vec3d(mesh.point(vh)[0], mesh.point(vh)[1], u[vh.idx()]));
+
+	updateMesh();
+	update();
+}
+
 void MeshViewerWidget::domvcparameterization()
 {
 	std::cout << "MVC Parameterization" << std::endl;
@@ -304,6 +321,54 @@ void MeshViewerWidget::doMorphing2D()
 	Morphing2D morphing(mesh, mesh_final);
 	morphing.Local();
 	update();
+}
+
+void MeshViewerWidget::doLoopSubdivision()
+{
+	std::cout << "Loop Subdivision..." << std::endl;
+	LoopSubdivision subdivision(&mesh);
+	std::vector<OpenMesh::Vec3d> EP = subdivision.AddEdgePoints();  //compute new egde points.
+	subdivision.UpdateVertices();  //update vertices
+
+	mesh.request_face_status();
+	mesh.request_edge_status();
+	mesh.request_vertex_status();
+	std::vector<OpenMesh::SmartVertexHandle> EPH; 
+	EPH.reserve(mesh.n_edges());
+	for (auto& piter : EP)  //add new edge points to mesh.
+	{
+		EPH.push_back(mesh.add_vertex(piter));
+	}
+
+	for (auto& fh : mesh.faces())  //add new faces.
+	{
+		auto h1 = fh.halfedge();
+		auto p1 = h1.from(); auto p2 = h1.to(); auto p3 = h1.next().to();
+		OpenMesh::SmartVertexHandle ep1 = EPH[h1.edge().idx()];
+		OpenMesh::SmartVertexHandle ep2 = EPH[h1.next().edge().idx()];
+		OpenMesh::SmartVertexHandle ep3 = EPH[h1.prev().edge().idx()];
+		//std::cout << mesh.point(p1) << std::endl;
+		//std::cout << mesh.point(p2) << std::endl;
+		//std::cout << mesh.point(p3) << std::endl;
+		//std::cout << mesh.point(ep1) << std::endl;
+		//std::cout << mesh.point(ep2) << std::endl;
+		//std::cout << mesh.point(ep3) << std::endl;
+		std::vector< OpenMesh::SmartVertexHandle> f1 = { p1,ep1,ep3 };
+		std::vector< OpenMesh::SmartVertexHandle> f2 = { ep1,ep2,ep3 };
+		std::vector< OpenMesh::SmartVertexHandle> f3 = { ep1,p2,ep2 };
+		std::vector< OpenMesh::SmartVertexHandle> f4 = { ep2,p3,ep3 };
+		mesh.delete_face(mesh.face_handle(fh.idx()),false);  //delete old faces.
+		mesh.add_face(f1);
+		mesh.add_face(f2);
+		mesh.add_face(f3);		
+		mesh.add_face(f4);
+	}
+	mesh.garbage_collection();
+	updateMesh();
+	update();
+
+	std::cout << "v num:" << mesh.n_vertices() << "\n f num:" << mesh.n_faces() << std::endl;
+
 }
 
 bool MeshViewerWidget::saveMesh(const char* filename)

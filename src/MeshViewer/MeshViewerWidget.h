@@ -55,6 +55,8 @@ public:
 	void setInitialMesh();
 	void setFinalMesh();
 	void doMorphing2D();
+	void solveLaplaceEquation();
+	void doLoopSubdivision();
 signals:
 	void loadMeshOK(bool,QString);
 

@@ -254,9 +254,9 @@ void InteractiveViewerWidget::mouseReleaseEvent(QMouseEvent *_event)
 			{
 				move_point_based_lastVertex(_event->x(), _event->y());
 				Mesh::Point P(selectedPoint[0], selectedPoint[1], selectedPoint[2]);
-				deformer->SetMovingVertex(lastestVertex, P);
+				//deformer->SetMovingVertex(lastestVertex, P);
 				//mesh.set_point( mesh.vertex_handle(lastestVertex), P );
-				deformer->DoARAP(5);
+				//deformer->DoARAP(5);
 				updateGL();
 			}
 		}

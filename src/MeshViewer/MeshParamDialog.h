@@ -27,7 +27,8 @@ signals:
 	void set_initial_mesh();
 	void set_final_mesh();
 	void do_morphing2d();
-
+	void solve_laplace1();
+	void loop_subdivision();
 private:
 	QWidget* Basic_Operation_And_Information;
 	QScrollArea *view_BOI;
@@ -38,6 +39,8 @@ private:
 	QPushButton* initial_mesh;
 	QPushButton* final_mesh;
 	QPushButton* morphing2d;
+	QPushButton* solve_laplace;
+	QPushButton* loop_subdivision_button;
 
 private:
 	void create_Basic_Operation_Information_Widget();

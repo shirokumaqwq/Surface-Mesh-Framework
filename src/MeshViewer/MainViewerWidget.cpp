@@ -41,6 +41,8 @@ void MainViewerWidget::initViewerWindow()
 	connect(MeshParam, SIGNAL(set_initial_mesh()), SLOT(initial_mesh()));
 	connect(MeshParam, SIGNAL(set_final_mesh()), SLOT(final_mesh()));
 	connect(MeshParam, SIGNAL(do_morphing2d()), SLOT(morphing_2d()));
+	connect(MeshParam, SIGNAL(solve_laplace1()), SLOT(solve_Laplace_equation()));
+	connect(MeshParam, SIGNAL(loop_subdivision()), SLOT(do_loop_subdivision()));
 
 }
 
@@ -127,4 +129,14 @@ void MainViewerWidget::final_mesh()
 void MainViewerWidget::morphing_2d()
 {
 	MeshViewer->doMorphing2D();
+}
+
+void MainViewerWidget::solve_Laplace_equation()
+{
+	MeshViewer->solveLaplaceEquation();
+}
+
+void MainViewerWidget::do_loop_subdivision()
+{
+	MeshViewer->doLoopSubdivision();
 }

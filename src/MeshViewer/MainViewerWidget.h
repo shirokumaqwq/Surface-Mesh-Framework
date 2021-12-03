@@ -138,7 +138,8 @@ public slots:
 	void initial_mesh();
 	void final_mesh();
 	void morphing_2d();
-
+	void solve_Laplace_equation();
+	void do_loop_subdivision();
 signals:
 	void haveLoadMesh(QString filePath);
 	void setMouseMode_signal_main(int);

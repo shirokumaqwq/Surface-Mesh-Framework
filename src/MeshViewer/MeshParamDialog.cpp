@@ -42,6 +42,8 @@ void MeshParamDialog::create_Basic_Operation_Information_Widget()
 	initial_mesh = new QPushButton("Set Initial Mesh");
 	final_mesh = new QPushButton("Set Final Mesh");
 	morphing2d = new QPushButton("Morphing 2D");
+	solve_laplace = new QPushButton("Solve Laplace equation");
+	loop_subdivision_button = new QPushButton("Loop subdivision");
 	leftLabel_BOI = new QLabel("");
 
 	QGridLayout* mainLayout = new QGridLayout(); int main_index = 0;
@@ -50,6 +52,8 @@ void MeshParamDialog::create_Basic_Operation_Information_Widget()
 	mainLayout->addWidget(initial_mesh, main_index, 0, 1, 2); main_index += 1;
 	mainLayout->addWidget(final_mesh, main_index, 0, 1, 2); main_index += 1;
 	mainLayout->addWidget(morphing2d, main_index, 0, 1, 2); main_index += 1;
+	mainLayout->addWidget(solve_laplace, main_index, 0, 1, 2); main_index += 1;
+	mainLayout->addWidget(loop_subdivision_button, main_index, 0, 1, 2); main_index += 1;
 
 	mainLayout->addWidget(leftLabel_BOI, main_index, 0, 1, 40);
 
@@ -67,6 +71,8 @@ void MeshParamDialog::create_Basic_Operation_Information_Widget()
 	connect(initial_mesh, SIGNAL(clicked()), SIGNAL(set_initial_mesh()));
 	connect(final_mesh, SIGNAL(clicked()), SIGNAL(set_final_mesh()));
 	connect(morphing2d, SIGNAL(clicked()), SIGNAL(do_morphing2d()));
+	connect(solve_laplace, SIGNAL(clicked()), SIGNAL(solve_laplace1()));
+	connect(loop_subdivision_button, SIGNAL(clicked()), SIGNAL(loop_subdivision()));
 
 	
 }

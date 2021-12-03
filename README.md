@@ -28,5 +28,16 @@ Open **SurfaceFramework.sln**, select **SrufaceFramework** as launch project, an
 
 .obj .off .ply .stl
 
-## 这个里写DGP第六次之后的作业
-https://www.bilibili.com/video/BV1B54y1B7Uc
+## QWQ
+
+这里存放了DGP、FEM和CAGD部分作业，还有一些DGP的作业下次一定挪过来qwq
+
+目前包含
+
+ARAP的曲面形变->APAPSurfaceModeling.h
+
+MVC参数化->MVAParameterization.h
+
+2d有限元求解pde->FEM2D.h
+
+Loop细分->LoopSubdivision.h
