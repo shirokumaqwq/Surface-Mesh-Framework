@@ -77,6 +77,9 @@ file (GLOB MeshViewer_FILE
     src/MeshViewer/Parameterization.*
     src/MeshViewer/ARAPSurfaceModeling.*
     src/MeshViewer/MVCParameterization.*
+    src/MeshViewer/LoopSubdivision.*
+    src/MeshViewer/FEM2D.*
+    src/MeshViewer/Morphing2D.*
 >>>>>>> 5a20fe25f028bd34ede2e9a26de6f8bee971945c
 )
 
